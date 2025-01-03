@@ -10,6 +10,7 @@ struct TextMemoListView: View {
     @State private var currentIndex: Int = 0
     @State private var offset: CGFloat = 0
     @State private var isDragging = false
+    @State private var isListView = true  // 追加：表示モードの状態
     
     private let cardHeight: CGFloat = 180
     private let screenWidth = UIScreen.main.bounds.width
@@ -17,9 +18,9 @@ struct TextMemoListView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // 上部スクロールリスト
-                ScrollView {
-                    LazyVStack(spacing: 12) {
+                if isListView {
+                    // リスト表示
+                    List {
                         ForEach(textMemos) { memo in
                             HStack {
                                 Text(memo.text)
@@ -35,66 +36,112 @@ struct TextMemoListView: View {
                                         .foregroundColor(themeManager.currentTheme)
                                 }
                             }
-                            .padding()
-                            .background(Color(UIColor.secondarySystemBackground))
-                            .cornerRadius(12)
+                        }
+                        .onDelete { indexSet in
+                            for index in indexSet {
+                                modelContext.delete(textMemos[index])
+                            }
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                // 削除アクションは.onDeleteで処理されるため、ここは空
+                            } label: {
+                                Image(systemName: "trash.fill")
+                            }
+                            .tint(themeManager.currentTheme)
                         }
                     }
-                    .padding()
-                }
-                
-                Divider()
-                
-                // 下部スワイプカード
-                ZStack {
-                    ForEach(Array(textMemos.enumerated().reversed()), id: \.element.id) { index, memo in
-                        let isCurrentCard = index == currentIndex
-                        
-                        cardView(for: memo)
-                            .frame(width: screenWidth - 32, height: cardHeight)
-                            .background(Color(UIColor.systemBackground))
-                            .cornerRadius(20)
-                            .shadow(radius: 5)
-                            .offset(x: isCurrentCard ? offset : 0)
-                            .rotationEffect(.degrees(isCurrentCard ? Double(offset / 20) : 0))
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { gesture in
-                                        if isCurrentCard {
-                                            offset = gesture.translation.width
-                                            isDragging = true
-                                        }
+                } else {
+                    // カード表示
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(textMemos) { memo in
+                                HStack {
+                                    Text(memo.text)
+                                        .lineLimit(2)
+                                        .font(.system(size: 14))
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        ttsManager.speak(memo.text)
+                                    }) {
+                                        Image(systemName: "play.circle.fill")
+                                            .foregroundColor(themeManager.currentTheme)
                                     }
-                                    .onEnded { gesture in
-                                        if isCurrentCard {
-                                            withAnimation(.spring()) {
-                                                let width = gesture.translation.width
-                                                if abs(width) > screenWidth * 0.3 {
-                                                    offset = (width > 0 ? screenWidth : -screenWidth) * 2
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                                        if width > 0 && currentIndex > 0 {
-                                                            currentIndex -= 1
-                                                        } else if width < 0 && currentIndex < textMemos.count - 1 {
-                                                            currentIndex += 1
+                                }
+                                .padding()
+                                .background(Color(UIColor.secondarySystemBackground))
+                                .cornerRadius(12)
+                            }
+                        }
+                        .padding()
+                    }
+                    
+                    Divider()
+                    
+                    // 下部スワイプカード
+                    ZStack {
+                        ForEach(Array(textMemos.enumerated().reversed()), id: \.element.id) { index, memo in
+                            let isCurrentCard = index == currentIndex
+                            
+                            cardView(for: memo)
+                                .frame(width: screenWidth - 32, height: cardHeight)
+                                .background(Color(UIColor.systemBackground))
+                                .cornerRadius(20)
+                                .shadow(radius: 5)
+                                .offset(x: isCurrentCard ? offset : 0)
+                                .rotationEffect(.degrees(isCurrentCard ? Double(offset / 20) : 0))
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { gesture in
+                                            if isCurrentCard {
+                                                offset = gesture.translation.width
+                                                isDragging = true
+                                            }
+                                        }
+                                        .onEnded { gesture in
+                                            if isCurrentCard {
+                                                withAnimation(.spring()) {
+                                                    let width = gesture.translation.width
+                                                    if abs(width) > screenWidth * 0.3 {
+                                                        offset = (width > 0 ? screenWidth : -screenWidth) * 2
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                                            if width > 0 && currentIndex > 0 {
+                                                                currentIndex -= 1
+                                                            } else if width < 0 && currentIndex < textMemos.count - 1 {
+                                                                currentIndex += 1
+                                                            }
+                                                            offset = 0
                                                         }
+                                                    } else {
                                                         offset = 0
                                                     }
-                                                } else {
-                                                    offset = 0
                                                 }
+                                                isDragging = false
                                             }
-                                            isDragging = false
                                         }
-                                    }
-                            )
-                            .zIndex(isCurrentCard ? 1 : 0)
-                            .opacity(isCurrentCard ? 1 : 0.5)
+                                )
+                                .zIndex(isCurrentCard ? 1 : 0)
+                                .opacity(isCurrentCard ? 1 : 0.5)
+                        }
                     }
+                    .frame(height: cardHeight + 32)
+                    .padding(.vertical)
                 }
-                .frame(height: cardHeight + 32)
-                .padding(.vertical)
             }
             .navigationTitle("メモ一覧")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        withAnimation {
+                            isListView.toggle()
+                        }
+                    }) {
+                        Image(systemName: isListView ? "square.grid.2x2" : "list.bullet")
+                    }
+                }
+            }
         }
     }
     
