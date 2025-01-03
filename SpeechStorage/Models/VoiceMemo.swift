@@ -3,15 +3,13 @@ import SwiftData
 
 @Model
 final class VoiceMemo {
-    let id: UUID
     var text: String
     var themeColor: String
     var createdAt: Date
     
-    init(text: String, themeColor: String) {
-        self.id = UUID()
+    init(text: String, themeColor: String = "#000000", createdAt: Date = Date()) {
         self.text = text
         self.themeColor = themeColor
-        self.createdAt = Date()
+        self.createdAt = createdAt
     }
 }
