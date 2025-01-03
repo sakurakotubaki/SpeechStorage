@@ -10,9 +10,22 @@
 		B38AD8AB2D27DEC200D9F120 /* SpeechStorage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechStorage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B3C774242D27E683001CBFD0 /* Exceptions for "SpeechStorage" folder in "SpeechStorage" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B38AD8AA2D27DEC200D9F120 /* SpeechStorage */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B38AD8AD2D27DEC200D9F120 /* SpeechStorage */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3C774242D27E683001CBFD0 /* Exceptions for "SpeechStorage" folder in "SpeechStorage" target */,
+			);
 			path = SpeechStorage;
 			sourceTree = "<group>";
 		};
@@ -252,6 +265,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpeechStorage/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "音声メモを録音するためにマイクへのアクセスが必要です";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "音声を文字に変換するために音声認識の使用許可が必要です";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -293,6 +307,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpeechStorage/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "音声メモを録音するためにマイクへのアクセスが必要です";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "音声を文字に変換するために音声認識の使用許可が必要です";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;

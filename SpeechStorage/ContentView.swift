@@ -9,47 +9,18 @@ import SwiftUI
 import SwiftData
 import AVFoundation
 
-class AudioManager: ObservableObject {
-    let synthesizer = AVSpeechSynthesizer()
-    
-    init() {
-        setupAudio()
-    }
-    
-    private func setupAudio() {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("Failed to setup audio session: \(error)")
-        }
-    }
-    
-    func speak(_ text: String) {
-        // 再生中の音声があれば停止
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-        
-        // 新しい音声を再生
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "ja-JP")
-        utterance.rate = 0.5 // 読み上げ速度を調整
-        utterance.pitchMultiplier = 1.0 // ピッチを調整
-        utterance.volume = 1.0 // 音量を最大に
-        synthesizer.speak(utterance)
-    }
-}
-
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var memos: [VoiceMemo]
     
     @StateObject private var speechManager = SpeechManager()
-    @StateObject private var audioPlayer = AudioPlayerManager.shared
-    @State private var selectedColor = Color.blue
+    @StateObject private var ttsManager = TTSManager.shared
+    @StateObject private var themeManager = ThemeManager.shared
     @State private var showingTextField = false
     @State private var selectedTab = 0
+    @State private var showingThemePicker = false
+    @State private var showToast = false
+    @State private var toastMessage = ""
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -71,12 +42,29 @@ struct ContentView: View {
                 }
                 .tag(2)
         }
+        .tint(themeManager.currentTheme)
+        .alert("エラー", isPresented: .constant(speechManager.errorMessage != nil)) {
+            Button("OK") {
+                speechManager.errorMessage = nil
+            }
+        } message: {
+            Text(speechManager.errorMessage ?? "")
+        }
+        .toast(isShowing: $showToast,
+               message: toastMessage,
+               icon: "checkmark.circle.fill",
+               backgroundColor: themeManager.currentTheme.opacity(0.9))
     }
     
     private var recordingView: some View {
         NavigationView {
             VStack {
-                ColorPickerView(selectedColor: $selectedColor)
+                if showingThemePicker {
+                    ColorPickerView(selectedColor: .init(
+                        get: { themeManager.currentTheme },
+                        set: { themeManager.updateTheme($0) }
+                    ))
+                }
                 
                 if speechManager.isRecording {
                     WaveformView()
@@ -91,6 +79,7 @@ struct ContentView: View {
                     Button(action: {
                         if !speechManager.transcribedText.isEmpty {
                             saveCurrentMemo()
+                            showSaveToast()
                         }
                     }) {
                         Text("保存")
@@ -98,7 +87,7 @@ struct ContentView: View {
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue)
+                            .background(themeManager.currentTheme)
                             .cornerRadius(10)
                     }
                     .padding(.horizontal)
@@ -117,18 +106,34 @@ struct ContentView: View {
                     Spacer()
                     
                     Button {
+                        showingThemePicker.toggle()
+                    } label: {
+                        Image(systemName: "paintpalette")
+                            .font(.title)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
                         if speechManager.isRecording {
                             speechManager.stopRecording()
                             if !speechManager.transcribedText.isEmpty {
                                 saveCurrentMemo()
+                                showSaveToast()
                             }
                         } else {
-                            try? speechManager.startRecording()
+                            do {
+                                try speechManager.startRecording()
+                            } catch {
+                                print("録音開始エラー: \(error.localizedDescription)")
+                                toastMessage = "録音開始エラー: \(error.localizedDescription)"
+                                showToast = true
+                            }
                         }
                     } label: {
                         Image(systemName: speechManager.isRecording ? "stop.circle.fill" : "mic.circle.fill")
                             .font(.system(size: 64))
-                            .foregroundColor(selectedColor)
+                            .foregroundColor(themeManager.currentTheme)
                     }
                 }
                 .padding()
@@ -149,10 +154,14 @@ struct ContentView: View {
                             Spacer()
                             
                             Button {
-                                audioPlayer.playText(memo.text, memoId: memo.id)
+                                if ttsManager.isPlaying && ttsManager.currentText == memo.text {
+                                    ttsManager.stopSpeaking()
+                                } else {
+                                    ttsManager.speak(memo.text)
+                                }
                             } label: {
-                                Image(systemName: audioPlayer.playingMemoId == memo.id ? "stop.circle.fill" : "play.circle.fill")
-                                    .foregroundColor(.blue)
+                                Image(systemName: ttsManager.isPlaying && ttsManager.currentText == memo.text ? "stop.circle.fill" : "play.circle.fill")
+                                    .foregroundColor(themeManager.currentTheme)
                                     .font(.title2)
                             }
                         }
@@ -176,11 +185,16 @@ struct ContentView: View {
     private func saveCurrentMemo() {
         let memo = VoiceMemo(
             text: speechManager.transcribedText,
-            themeColor: selectedColor.toHex() ?? "#000000"
+            themeColor: themeManager.currentTheme.toHex() ?? "#000000"
         )
         modelContext.insert(memo)
         speechManager.transcribedText = ""
         showingTextField = false
+    }
+    
+    private func showSaveToast() {
+        toastMessage = "音声メモを保存しました"
+        showToast = true
     }
 }
 
