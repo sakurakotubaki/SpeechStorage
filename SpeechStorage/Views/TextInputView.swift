@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import DotLottie
 
 struct TextInputView: View {
     @Environment(\.modelContext) private var modelContext
@@ -13,6 +14,17 @@ struct TextInputView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                DotLottieAnimation(
+                            fileName: "think",
+                            config: AnimationConfig(
+                                autoplay: true,
+                                loop: true,
+                                speed: 1.0
+                            )
+                        )
+                        .view()
+                        .frame(width: 200, height: 200)
+                
                 TextEditor(text: $inputText)
                     .focused($isFocused)
                     .frame(height: 200)
@@ -33,7 +45,7 @@ struct TextInputView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("テキスト入力")
+            .navigationTitle("考えていることを書こう")
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()

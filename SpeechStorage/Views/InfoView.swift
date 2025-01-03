@@ -32,7 +32,7 @@ struct InfoView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("1. テキスト入力")
                             .font(.headline)
-                        Text("キーボードボタンをタップしてテキストを入力できます。")
+                        Text("キーボードボタンでテキストを入力できます。")
                         
                         Text("2. メモの管理")
                             .font(.headline)
@@ -41,6 +41,10 @@ struct InfoView: View {
                         Text("3. カラー設定")
                             .font(.headline)
                         Text("メモごとに好きな色を設定できます。")
+                        
+                        Text("4. 表示切り替え")
+                            .font(.headline)
+                        Text("メモ帳の右上のアイコンを押すとカードとリストのUIを切り替えることができます。")
                     }
                     .padding(.vertical, 5)
                 }
