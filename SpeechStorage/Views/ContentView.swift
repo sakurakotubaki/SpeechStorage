@@ -16,6 +16,13 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
+            // 録音タブ
+            VoiceRecordView()
+                .tabItem {
+                    Label("録音", systemImage: "mic")
+                }
+                .tag(0)
+                
             // テキスト入力タブ
             TextInputView(
                 themeManager: themeManager,
