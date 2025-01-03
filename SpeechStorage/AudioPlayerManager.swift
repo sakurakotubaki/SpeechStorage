@@ -1,77 +1,78 @@
+import Foundation
 import AVFoundation
 
-class AudioPlayerManager: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
+class AudioPlayerManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = AudioPlayerManager()
     
-    private let synthesizer: AVSpeechSynthesizer
-    @Published var playingMemoId: String?
+    @Published var isPlaying = false
+    @Published var currentMemoId: UUID?
     
-    override init() {
-        synthesizer = AVSpeechSynthesizer()
+    private var audioPlayer: AVAudioPlayer?
+    private let audioSession = AVAudioSession.sharedInstance()
+    
+    private override init() {
         super.init()
-        synthesizer.delegate = self
         setupAudioSession()
     }
     
     private func setupAudioSession() {
         do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playback, mode: .default)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            try audioSession.setCategory(.playback, mode: .default, options: [.defaultToSpeaker])
         } catch {
-            print("Failed to setup audio session: \(error.localizedDescription)")
+            print("オーディオセッションの設定エラー: \(error.localizedDescription)")
         }
     }
     
-    func playText(_ text: String, memoId: String) {
-        // 同じメモを再生中なら停止
-        if playingMemoId == memoId {
-            stopPlaying()
-            return
-        }
-        
-        // 他のメモを再生中なら停止
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-        
-        // 再生用のオーディオセッションを設定
+    func playAudio(url: URL, memoId: UUID) {
         do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playback, mode: .default)
+            // 既に再生中なら停止
+            if isPlaying {
+                stopPlaying()
+            }
+            
+            // セッションをアクティブ化
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.delegate = self
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+            
+            isPlaying = true
+            currentMemoId = memoId
         } catch {
-            print("Failed to setup playback session: \(error)")
-            return
+            print("音声再生エラー: \(error.localizedDescription)")
+            isPlaying = false
+            currentMemoId = nil
         }
-        
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "ja-JP")
-        utterance.rate = 0.5
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        
-        playingMemoId = memoId
-        synthesizer.speak(utterance)
     }
     
     func stopPlaying() {
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
+        audioPlayer?.stop()
+        audioPlayer = nil
+        isPlaying = false
+        currentMemoId = nil
+        
+        do {
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("オーディオセッションの終了エラー: \(error.localizedDescription)")
         }
-        playingMemoId = nil
     }
     
-    // AVSpeechSynthesizerDelegate methods
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        DispatchQueue.main.async {
-            self.playingMemoId = nil
-        }
-    }
+    // MARK: - AVAudioPlayerDelegate
     
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        DispatchQueue.main.async {
-            self.playingMemoId = nil
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            self?.isPlaying = false
+            self?.currentMemoId = nil
+            self?.audioPlayer = nil
+            
+            do {
+                try self?.audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            } catch {
+                print("オーディオセッションの終了エラー: \(error.localizedDescription)")
+            }
         }
     }
 }

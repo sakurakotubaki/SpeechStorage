@@ -11,130 +11,108 @@ import AVFoundation
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var memos: [VoiceMemo]
+    @Query private var textMemos: [VoiceMemo]
+    @Query private var audioMemos: [AudioMemo]
     
     @StateObject private var speechManager = SpeechManager()
     @StateObject private var ttsManager = TTSManager.shared
+    @StateObject private var audioPlayer = AudioPlayerManager.shared
     @StateObject private var themeManager = ThemeManager.shared
-    @State private var showingTextField = false
     @State private var selectedTab = 0
-    @State private var showingThemePicker = false
     @State private var showToast = false
     @State private var toastMessage = ""
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            recordingView
-                .tabItem {
-                    Label("録音", systemImage: "mic.fill")
-                }
-                .tag(0)
+            // 音声録音タブ
+            AudioRecordingView(
+                speechManager: speechManager,
+                themeManager: themeManager,
+                modelContext: modelContext,
+                showToast: $showToast,
+                toastMessage: $toastMessage
+            )
+            .tabItem {
+                Label("録音", systemImage: "mic.fill")
+            }
+            .tag(0)
             
-            memoListView
-                .tabItem {
-                    Label("メモ", systemImage: "list.bullet")
-                }
-                .tag(1)
+            // 音声メモ一覧タブ
+            AudioMemoListView(
+                audioMemos: audioMemos,
+                audioPlayer: audioPlayer,
+                themeManager: themeManager,
+                modelContext: modelContext
+            )
+            .tabItem {
+                Label("音声メモ", systemImage: "waveform")
+            }
+            .tag(1)
             
-            InfoView()
-                .tabItem {
-                    Label("情報", systemImage: "info.circle")
-                }
-                .tag(2)
+            // テキスト入力タブ
+            TextInputView(
+                themeManager: themeManager,
+                ttsManager: ttsManager,
+                modelContext: modelContext,
+                showToast: $showToast,
+                toastMessage: $toastMessage
+            )
+            .tabItem {
+                Label("テキスト", systemImage: "text.bubble")
+            }
+            .tag(2)
+            
+            // テキストメモ一覧タブ
+            TextMemoListView(
+                textMemos: textMemos,
+                ttsManager: ttsManager,
+                themeManager: themeManager,
+                modelContext: modelContext
+            )
+            .tabItem {
+                Label("テキストメモ", systemImage: "doc.text")
+            }
+            .tag(3)
         }
         .tint(themeManager.currentTheme)
-        .alert("エラー", isPresented: .constant(speechManager.errorMessage != nil)) {
-            Button("OK") {
-                speechManager.errorMessage = nil
-            }
-        } message: {
-            Text(speechManager.errorMessage ?? "")
-        }
         .toast(isShowing: $showToast,
                message: toastMessage,
                icon: "checkmark.circle.fill",
                backgroundColor: themeManager.currentTheme.opacity(0.9))
     }
+}
+
+// AudioRecordingView.swift
+struct AudioRecordingView: View {
+    @ObservedObject var speechManager: SpeechManager
+    @ObservedObject var themeManager: ThemeManager
+    let modelContext: ModelContext
+    @Binding var showToast: Bool
+    @Binding var toastMessage: String
     
-    private var recordingView: some View {
-        NavigationView {
+    var body: some View {
+        NavigationStack {
             VStack {
-                if showingThemePicker {
-                    ColorPickerView(selectedColor: .init(
-                        get: { themeManager.currentTheme },
-                        set: { themeManager.updateTheme($0) }
-                    ))
-                }
-                
                 if speechManager.isRecording {
                     WaveformView()
                         .frame(height: 60)
                 }
                 
-                if showingTextField {
-                    TextField("テキストを入力", text: $speechManager.transcribedText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
-                    
-                    Button(action: {
-                        if !speechManager.transcribedText.isEmpty {
-                            saveCurrentMemo()
-                            showSaveToast()
-                        }
-                    }) {
-                        Text("保存")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(themeManager.currentTheme)
-                            .cornerRadius(10)
-                    }
-                    .padding(.horizontal)
-                }
-                
                 Spacer()
                 
-                HStack {
-                    Button {
-                        showingTextField.toggle()
-                    } label: {
-                        Image(systemName: "keyboard")
-                            .font(.title)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        showingThemePicker.toggle()
-                    } label: {
-                        Image(systemName: "paintpalette")
-                            .font(.title)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        if speechManager.isRecording {
-                            speechManager.stopRecording()
-                            if !speechManager.transcribedText.isEmpty {
-                                saveCurrentMemo()
-                                showSaveToast()
-                            }
-                        } else {
-                            do {
-                                try speechManager.startRecording()
-                            } catch {
-                                print("録音開始エラー: \(error.localizedDescription)")
-                                toastMessage = "録音開始エラー: \(error.localizedDescription)"
-                                showToast = true
-                            }
+                Button {
+                    if speechManager.isRecording {
+                        if let url = speechManager.stopRecording() {
+                            saveAudioMemo(url: url)
+                            showSaveToast()
                         }
-                    } label: {
-                        Image(systemName: speechManager.isRecording ? "stop.circle.fill" : "mic.circle.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(themeManager.currentTheme)
+                    } else {
+                        speechManager.startRecording()
                     }
+                } label: {
+                    Image(systemName: speechManager.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                        .font(.system(size: 64))
+                        .foregroundColor(themeManager.currentTheme)
                 }
                 .padding()
             }
@@ -142,59 +120,225 @@ struct ContentView: View {
         }
     }
     
-    private var memoListView: some View {
-        NavigationView {
-            List {
-                ForEach(memos) { memo in
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text(memo.text)
-                                .foregroundColor(Color(hex: memo.themeColor))
-                            
-                            Spacer()
-                            
-                            Button {
-                                if ttsManager.isPlaying && ttsManager.currentText == memo.text {
-                                    ttsManager.stopSpeaking()
-                                } else {
-                                    ttsManager.speak(memo.text)
-                                }
-                            } label: {
-                                Image(systemName: ttsManager.isPlaying && ttsManager.currentText == memo.text ? "stop.circle.fill" : "play.circle.fill")
-                                    .foregroundColor(themeManager.currentTheme)
-                                    .font(.title2)
-                            }
-                        }
-                        
-                        Text(memo.createdAt, style: .date)
-                            .font(.caption)
-                    }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            modelContext.delete(memo)
-                        } label: {
-                            Label("削除", systemImage: "trash")
-                        }
-                    }
-                }
-            }
-            .navigationTitle("メモ一覧")
-        }
-    }
-    
-    private func saveCurrentMemo() {
-        let memo = VoiceMemo(
-            text: speechManager.transcribedText,
-            themeColor: themeManager.currentTheme.toHex() ?? "#000000"
-        )
+    private func saveAudioMemo(url: URL) {
+        let memo = AudioMemo(audioURL: url, themeColor: themeManager.currentTheme.toHex() ?? "#000000")
         modelContext.insert(memo)
-        speechManager.transcribedText = ""
-        showingTextField = false
     }
     
     private func showSaveToast() {
         toastMessage = "音声メモを保存しました"
         showToast = true
+    }
+}
+
+// AudioMemoListView.swift
+struct AudioMemoListView: View {
+    let audioMemos: [AudioMemo]
+    @ObservedObject var audioPlayer: AudioPlayerManager
+    @ObservedObject var themeManager: ThemeManager
+    let modelContext: ModelContext
+    
+    var body: some View {
+        NavigationStack {
+            List(audioMemos) { memo in
+                AudioMemoRow(
+                    memo: memo,
+                    audioPlayer: audioPlayer,
+                    themeManager: themeManager,
+                    modelContext: modelContext
+                )
+            }
+            .navigationTitle("音声メモ一覧")
+        }
+    }
+}
+
+struct AudioMemoRow: View {
+    let memo: AudioMemo
+    @ObservedObject var audioPlayer: AudioPlayerManager
+    @ObservedObject var themeManager: ThemeManager
+    let modelContext: ModelContext
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "waveform")
+                .foregroundColor(Color(hex: memo.themeColor))
+            
+            Text(memo.createdAt.formatted())
+            
+            Spacer()
+            
+            Button {
+                if audioPlayer.isPlaying && audioPlayer.currentMemoId == memo.id {
+                    audioPlayer.stopPlaying()
+                } else {
+                    audioPlayer.playAudio(url: memo.audioURL, memoId: memo.id)
+                }
+            } label: {
+                Image(systemName: audioPlayer.isPlaying && audioPlayer.currentMemoId == memo.id ? "stop.circle.fill" : "play.circle.fill")
+                    .foregroundColor(themeManager.currentTheme)
+                    .font(.title2)
+            }
+        }
+        .swipeActions {
+            Button(role: .destructive) {
+                modelContext.delete(memo)
+            } label: {
+                Label("削除", systemImage: "trash")
+            }
+        }
+    }
+}
+
+// TextInputView.swift
+struct TextInputView: View {
+    @ObservedObject var themeManager: ThemeManager
+    @ObservedObject var ttsManager: TTSManager
+    let modelContext: ModelContext
+    @Binding var showToast: Bool
+    @Binding var toastMessage: String
+    @FocusState private var isFocused: Bool
+    
+    @State private var text = ""
+    
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $text)
+                        .frame(height: 200)
+                        .padding(4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
+                        .padding()
+                        .focused($isFocused)
+                    
+                    if text.isEmpty {
+                        Text("テキストを入力")
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 16)
+                            .allowsHitTesting(false)
+                    }
+                }
+                
+                if isFocused {
+                    HStack {
+                        Spacer()
+                        Button("閉じる") {
+                            isFocused = false
+                        }
+                        .foregroundColor(themeManager.currentTheme)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                    }
+                    .background(Color(.systemBackground))
+                    .overlay(
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.gray.opacity(0.2)),
+                        alignment: .top
+                    )
+                }
+                
+                Button(action: {
+                    if !text.isEmpty {
+                        saveTextMemo()
+                        showSaveToast()
+                        isFocused = false
+                    }
+                }) {
+                    Text("保存")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(themeManager.currentTheme)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
+                .disabled(text.isEmpty)
+                
+                Spacer()
+            }
+            .navigationTitle("テキスト入力")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private func saveTextMemo() {
+        let memo = VoiceMemo(text: text, themeColor: themeManager.currentTheme.toHex() ?? "#000000")
+        modelContext.insert(memo)
+        text = ""
+    }
+    
+    private func showSaveToast() {
+        toastMessage = "テキストメモを保存しました"
+        showToast = true
+    }
+}
+
+// TextMemoListView.swift
+struct TextMemoListView: View {
+    let textMemos: [VoiceMemo]
+    @ObservedObject var ttsManager: TTSManager
+    @ObservedObject var themeManager: ThemeManager
+    let modelContext: ModelContext
+    
+    var body: some View {
+        NavigationStack {
+            List(textMemos) { memo in
+                TextMemoRow(
+                    memo: memo,
+                    ttsManager: ttsManager,
+                    themeManager: themeManager,
+                    modelContext: modelContext
+                )
+            }
+            .navigationTitle("テキストメモ一覧")
+        }
+    }
+}
+
+struct TextMemoRow: View {
+    let memo: VoiceMemo
+    @ObservedObject var ttsManager: TTSManager
+    @ObservedObject var themeManager: ThemeManager
+    let modelContext: ModelContext
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(memo.text)
+                    .foregroundColor(Color(hex: memo.themeColor))
+                
+                Spacer()
+                
+                Button {
+                    if ttsManager.isPlaying && ttsManager.currentText == memo.text {
+                        ttsManager.stopSpeaking()
+                    } else {
+                        ttsManager.speak(memo.text)
+                    }
+                } label: {
+                    Image(systemName: ttsManager.isPlaying && ttsManager.currentText == memo.text ? "stop.circle.fill" : "play.circle.fill")
+                        .foregroundColor(themeManager.currentTheme)
+                        .font(.title2)
+                }
+            }
+            
+            Text(memo.createdAt, style: .date)
+                .font(.caption)
+        }
+        .swipeActions {
+            Button(role: .destructive) {
+                modelContext.delete(memo)
+            } label: {
+                Label("削除", systemImage: "trash")
+            }
+        }
     }
 }
 

@@ -6,29 +6,17 @@ class SpeechManager: NSObject, ObservableObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
+    private let audioSession = AVAudioSession.sharedInstance()
     
     @Published var isRecording = false
     @Published var transcribedText = ""
     @Published var errorMessage: String?
+    @Published var recordingURL: URL?
     
     override init() {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))
         super.init()
-        
-        // 初期化時にオーディオセッションを設定
-        setupAudioSession()
         requestPermissions()
-    }
-    
-    private func setupAudioSession() {
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers, .defaultToSpeaker])
-            try audioSession.setPreferredSampleRate(44100.0)
-            try audioSession.setPreferredIOBufferDuration(0.005)
-        } catch {
-            print("オーディオセッションの初期設定エラー: \(error)")
-        }
     }
     
     private func requestPermissions() {
@@ -48,48 +36,44 @@ class SpeechManager: NSObject, ObservableObject {
                 }
             }
         }
+        
+        // マイクの権限も要求
+        audioSession.requestRecordPermission { [weak self] allowed in
+            DispatchQueue.main.async {
+                if !allowed {
+                    self?.errorMessage = "マイクの使用が許可されていません"
+                }
+            }
+        }
     }
     
     func startRecording() {
-        // 既存のタスクをクリーンアップ
         resetAudio()
         
-        let audioSession = AVAudioSession.sharedInstance()
         do {
+            try audioSession.setCategory(.record, mode: .measurement, options: [])
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             errorMessage = "オーディオセッションの設定に失敗しました"
             return
         }
         
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        
         let inputNode = audioEngine.inputNode
-        guard let recognitionRequest = recognitionRequest,
-              let recognitionFormat = inputNode.outputFormat(forBus: 0).toCanonical() else {
-            errorMessage = "音声認識の準備に失敗しました"
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        
+        // 音声ファイルの保存準備
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        recordingURL = documentsPath.appendingPathComponent("\(UUID().uuidString).m4a")
+        
+        guard let recordingURL = recordingURL else {
+            errorMessage = "録音ファイルの準備に失敗しました"
             return
         }
         
-        recognitionRequest.shouldReportPartialResults = true
+        let audioFile = try? AVAudioFile(forWriting: recordingURL, settings: recordingFormat.settings)
         
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            guard let self = self else { return }
-            
-            var isFinal = false
-            
-            if let result = result {
-                self.transcribedText = result.bestTranscription.formattedString
-                isFinal = result.isFinal
-            }
-            
-            if error != nil || isFinal {
-                self.stopRecording()
-            }
-        }
-        
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recognitionFormat) { buffer, _ in
-            self.recognitionRequest?.append(buffer)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+            try? audioFile?.write(from: buffer)
         }
         
         audioEngine.prepare()
@@ -103,22 +87,17 @@ class SpeechManager: NSObject, ObservableObject {
         }
     }
     
-    func stopRecording() {
+    func stopRecording() -> URL? {
         defer {
-            isRecording = false
+            resetAudio()
         }
         
         if audioEngine.isRunning {
             audioEngine.stop()
-            recognitionRequest?.endAudio()
-            
-            // オーディオセッションを適切に終了
-            do {
-                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            } catch {
-                print("オーディオセッションの終了に失敗: \(error)")
-            }
+            try? audioSession.setActive(false, options: .notifyOthersOnDeactivation)
         }
+        
+        return recordingURL
     }
     
     private func resetAudio() {
@@ -126,19 +105,13 @@ class SpeechManager: NSObject, ObservableObject {
             audioEngine.stop()
         }
         
-        // 既存のタップを安全に削除
         let inputNode = audioEngine.inputNode
         if inputNode.numberOfInputs > 0 {
             inputNode.removeTap(onBus: 0)
         }
         
-        recognitionRequest?.endAudio()
-        recognitionRequest = nil
-        
-        recognitionTask?.cancel()
-        recognitionTask = nil
-        
         isRecording = false
+        recordingURL = nil
     }
 }
 

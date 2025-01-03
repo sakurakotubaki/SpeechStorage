@@ -1,17 +1,17 @@
+import Foundation
 import SwiftData
-import SwiftUI
 
 @Model
-class VoiceMemo {
-    let id: String
+final class VoiceMemo {
+    let id: UUID
     var text: String
+    var themeColor: String
     var createdAt: Date
-    var themeColor: String // Hex string for color
     
     init(text: String, themeColor: String) {
-        self.id = UUID().uuidString
+        self.id = UUID()
         self.text = text
-        self.createdAt = Date()
         self.themeColor = themeColor
+        self.createdAt = Date()
     }
 }
