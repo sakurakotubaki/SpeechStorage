@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct InfoView: View {
+    @StateObject private var themeManager = ThemeManager.shared
+    @State private var selectedColor: Color = ThemeManager.shared.currentTheme
+    
     var body: some View {
         NavigationView {
             List {
@@ -11,6 +14,18 @@ struct InfoView: View {
                         Text("音声を録音して文字起こしができるアプリです。")
                             .font(.subheadline)
                     }
+                }
+                
+                Section(header: Text("テーマカラー")) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("アプリのテーマカラーを変更できます")
+                            .font(.subheadline)
+                        ColorPickerView(selectedColor: $selectedColor)
+                            .onChange(of: selectedColor) { newColor in
+                                themeManager.updateTheme(newColor)
+                            }
+                    }
+                    .padding(.vertical, 5)
                 }
                 
                 Section(header: Text("使い方")) {

@@ -73,6 +73,13 @@ struct ContentView: View {
                 Label("テキストメモ", systemImage: "doc.text")
             }
             .tag(3)
+            
+            // 設定タブ
+            InfoView()
+                .tabItem {
+                    Label("設定", systemImage: "gear")
+                }
+                .tag(4)
         }
         .tint(themeManager.currentTheme)
         .toast(isShowing: $showToast,
