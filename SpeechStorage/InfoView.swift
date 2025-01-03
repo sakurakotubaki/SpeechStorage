@@ -7,11 +7,11 @@ struct InfoView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("アプリについて")) {
+                Section(header: Text("このアプリについて")) {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("音声メモアプリ")
                             .font(.headline)
-                        Text("音声を録音して文字起こしができるアプリです。")
+                        Text("テキストを音声で読み上げることができます。")
                             .font(.subheadline)
                     }
                 }
