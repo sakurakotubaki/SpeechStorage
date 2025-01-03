@@ -1,7 +1,7 @@
 import Speech
 import AVFoundation
 
-class SpeechManager: ObservableObject {
+class SpeechManager: NSObject, ObservableObject, SFSpeechRecognizerDelegate {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -10,12 +10,17 @@ class SpeechManager: ObservableObject {
     @Published var isRecording = false
     @Published var transcribedText = ""
     
+    override init() {
+        super.init()
+        speechRecognizer?.delegate = self
+    }
+    
     func startRecording() throws {
         // Reset previous state
         recognitionTask?.cancel()
         recognitionTask = nil
         
-        // Configure audio session
+        // Configure audio session for recording
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
@@ -52,5 +57,20 @@ class SpeechManager: ObservableObject {
         recognitionRequest?.endAudio()
         audioEngine.inputNode.removeTap(onBus: 0)
         isRecording = false
+        
+        // 録音終了後、再生用のオーディオセッションに切り替え
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("Failed to switch audio session: \(error)")
+        }
+    }
+    
+    // SFSpeechRecognizerDelegate
+    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
+        if !available {
+            stopRecording()
+        }
     }
 }
