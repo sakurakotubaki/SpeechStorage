@@ -32,7 +32,7 @@ struct InfoView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("1. テキスト入力")
                             .font(.headline)
-                        Text("キーボードボタンをタップしてテキストを入力できます。")
+                        Text("キーボードボタンでテキストを入力できます。")
                         
                         Text("2. メモの管理")
                             .font(.headline)
@@ -41,8 +41,29 @@ struct InfoView: View {
                         Text("3. カラー設定")
                             .font(.headline)
                         Text("メモごとに好きな色を設定できます。")
+                        
+                        Text("4. 表示切り替え")
+                            .font(.headline)
+                        Text("メモ帳の右上のアイコンを押すとカードとリストのUIを切り替えることができます。")
                     }
                     .padding(.vertical, 5)
+                }
+                
+                Section(header: Text("法的情報")) {
+                    Link(destination: URL(string: "https://pacific-sandalwood-6de.notion.site/170a1df91a0780c59d69d487508f123f")!) {
+                        HStack {
+                            Text("利用規約")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                        }
+                    }
+                    Link(destination: URL(string: "https://pacific-sandalwood-6de.notion.site/171a1df91a0780f48832ca5fd55356d7")!) {
+                        HStack {
+                            Text("プライバシーポリシー")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                        }
+                    }
                 }
             }
             .navigationTitle("情報")

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import DotLottie
 
 struct TextInputView: View {
     @Environment(\.modelContext) private var modelContext
@@ -13,12 +14,32 @@ struct TextInputView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                TextEditor(text: $inputText)
-                    .focused($isFocused)
-                    .frame(height: 200)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                DotLottieAnimation(
+                            fileName: "think",
+                            config: AnimationConfig(
+                                autoplay: true,
+                                loop: true,
+                                speed: 1.0
+                            )
+                        )
+                        .view()
+                        .frame(width: 200, height: 200)
+                
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $inputText)
+                        .focused($isFocused)
+                        .frame(height: 200)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    if inputText.isEmpty {
+                        Text("考えていることを書こう")
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                    }
+                }
                 
                 Button(action: saveText) {
                     Text("保存")
@@ -33,7 +54,7 @@ struct TextInputView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("テキスト入力")
+            .navigationTitle("新規メモ")
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
