@@ -29,10 +29,8 @@ struct ContentView: View {
             
             // テキストメモ一覧タブ
             TextMemoListView(
-                textMemos: textMemos,
                 ttsManager: ttsManager,
-                themeManager: themeManager,
-                modelContext: modelContext
+                themeManager: themeManager
             )
             .tabItem {
                 Label("メモ一覧", systemImage: "doc.text")

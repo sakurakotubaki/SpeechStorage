@@ -1,10 +1,3 @@
-//
-//  SpeechStorageApp.swift
-//  SpeechStorage
-//
-//  Created by 橋本純一 on 2025/01/03.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -15,8 +8,8 @@ struct SpeechStorageApp: App {
     init() {
         do {
             let schema = Schema([VoiceMemo.self])
-            let modelConfiguration = ModelConfiguration(schema: schema)
-            container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let config = ModelConfiguration("speech-storage", schema: schema)
+            container = try ModelContainer(for: schema, configurations: config)
         } catch {
             fatalError("Could not initialize ModelContainer: \(error)")
         }
