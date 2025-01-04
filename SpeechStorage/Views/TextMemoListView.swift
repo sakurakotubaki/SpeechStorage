@@ -2,10 +2,10 @@ import SwiftUI
 import SwiftData
 
 struct TextMemoListView: View {
-    let textMemos: [VoiceMemo]
+    @Query private var textMemos: [VoiceMemo]
     @ObservedObject var ttsManager: TTSManager
     @ObservedObject var themeManager: ThemeManager
-    let modelContext: ModelContext
+    @Environment(\.modelContext) private var modelContext
     
     @State private var currentIndex: Int = 0
     @State private var offset: CGFloat = 0
@@ -14,6 +14,13 @@ struct TextMemoListView: View {
     
     private let cardHeight: CGFloat = 180
     private let screenWidth = UIScreen.main.bounds.width
+    
+    init(ttsManager: TTSManager, themeManager: ThemeManager) {
+        self.ttsManager = ttsManager
+        self.themeManager = themeManager
+        let sortDescriptor = SortDescriptor<VoiceMemo>(\.createdAt, order: .reverse)
+        _textMemos = Query(sort: [sortDescriptor])
+    }
     
     var body: some View {
         NavigationStack {
@@ -36,19 +43,19 @@ struct TextMemoListView: View {
                                         .foregroundColor(themeManager.currentTheme)
                                 }
                             }
-                        }
-                        .onDelete { indexSet in
-                            for index in indexSet {
-                                modelContext.delete(textMemos[index])
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(memo)
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        print("Error deleting memo: \(error)")
+                                    }
+                                } label: {
+                                    Image(systemName: "trash.fill")
+                                }
+                                .tint(themeManager.currentTheme)
                             }
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                // 削除アクションは.onDeleteで処理されるため、ここは空
-                            } label: {
-                                Image(systemName: "trash.fill")
-                            }
-                            .tint(themeManager.currentTheme)
                         }
                     }
                 } else {
@@ -169,14 +176,7 @@ struct TextMemoListView: View {
                         .foregroundColor(themeManager.currentTheme)
                 }
                 
-                Button(action: {
-                    withAnimation {
-                        modelContext.delete(memo)
-                        if currentIndex >= textMemos.count - 1 {
-                            currentIndex = max(0, textMemos.count - 2)
-                        }
-                    }
-                }) {
+                Button(action: deleteCard) {
                     Image(systemName: "trash.circle.fill")
                         .font(.title2)
                         .foregroundColor(.red)
@@ -190,13 +190,26 @@ struct TextMemoListView: View {
                 .fill(Color(UIColor.secondarySystemBackground))
         )
     }
+    
+    private func deleteCard() {
+        guard currentIndex < textMemos.count else { return }
+        let memo = textMemos[currentIndex]
+        
+        withAnimation {
+            modelContext.delete(memo)
+            do {
+                try modelContext.save()
+                currentIndex = min(currentIndex, max(0, textMemos.count - 1))
+            } catch {
+                print("Error deleting card: \(error)")
+            }
+        }
+    }
 }
 
 #Preview {
     TextMemoListView(
-        textMemos: [],
         ttsManager: TTSManager.shared,
-        themeManager: ThemeManager.shared,
-        modelContext: ModelContext(try! ModelContainer(for: VoiceMemo.self))
+        themeManager: ThemeManager.shared
     )
 }
