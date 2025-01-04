@@ -75,11 +75,17 @@ struct TextInputView: View {
         )
         
         modelContext.insert(memo)
-        
-        // リセットと通知
-        inputText = ""
-        showToast = true
-        toastMessage = "保存しました"
-        isFocused = false  // 保存時にキーボードを閉じる
+        do {
+            try modelContext.save()
+            // リセットと通知
+            inputText = ""
+            showToast = true
+            toastMessage = "保存しました"
+            isFocused = false  // 保存時にキーボードを閉じる
+        } catch {
+            print("Error saving memo: \(error)")
+            showToast = true
+            toastMessage = "保存に失敗しました"
+        }
     }
 }

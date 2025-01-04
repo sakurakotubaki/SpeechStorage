@@ -8,8 +8,8 @@ struct SpeechStorageApp: App {
     init() {
         do {
             let schema = Schema([VoiceMemo.self])
-            let config = ModelConfiguration("speech-storage", schema: schema)
-            container = try ModelContainer(for: schema, configurations: config)
+            let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            container = try ModelContainer(for: schema, configurations: modelConfiguration)
         } catch {
             fatalError("Could not initialize ModelContainer: \(error)")
         }
@@ -18,7 +18,7 @@ struct SpeechStorageApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(container)
         }
-        .modelContainer(container)
     }
 }
