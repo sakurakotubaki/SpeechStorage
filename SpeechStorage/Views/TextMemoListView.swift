@@ -45,11 +45,13 @@ struct TextMemoListView: View {
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    modelContext.delete(memo)
-                                    do {
-                                        try modelContext.save()
-                                    } catch {
-                                        print("Error deleting memo: \(error)")
+                                    withAnimation {
+                                        modelContext.delete(memo)
+                                        do {
+                                            try modelContext.save()
+                                        } catch {
+                                            print("Error deleting memo: \(error)")
+                                        }
                                     }
                                 } label: {
                                     Image(systemName: "trash.fill")
@@ -199,7 +201,10 @@ struct TextMemoListView: View {
             modelContext.delete(memo)
             do {
                 try modelContext.save()
-                currentIndex = min(currentIndex, max(0, textMemos.count - 1))
+                // インデックスの更新
+                if !textMemos.isEmpty {
+                    currentIndex = min(currentIndex, textMemos.count - 1)
+                }
             } catch {
                 print("Error deleting card: \(error)")
             }
