@@ -6,26 +6,12 @@
     <array>
         <dict>
             <key>NSPrivacyAccessedAPIType</key>
-            <string>NSSpeechSynthesisUsageDescription</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
-            <array>
-                <string>SPE.1</string>
-            </array>
-        </dict>
-        <dict>
-            <key>NSPrivacyAccessedAPIType</key>
             <string>NSUserDefaults</string>
             <key>NSPrivacyAccessedAPITypeReasons</key>
             <array>
-                <string>UDE.1</string>
+                <string>CA92.1</string>
             </array>
         </dict>
     </array>
-    <key>NSPrivacyTrackingDomains</key>
-    <array/>
-    <key>NSPrivacyCollectedDataTypes</key>
-    <array/>
-    <key>NSPrivacyTracking</key>
-    <false/>
 </dict>
 </plist>
