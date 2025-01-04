@@ -48,6 +48,23 @@ struct InfoView: View {
                     }
                     .padding(.vertical, 5)
                 }
+                
+                Section(header: Text("法的情報")) {
+                    Link(destination: URL(string: "https://pacific-sandalwood-6de.notion.site/170a1df91a0780c59d69d487508f123f")!) {
+                        HStack {
+                            Text("利用規約")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                        }
+                    }
+                    Link(destination: URL(string: "https://pacific-sandalwood-6de.notion.site/171a1df91a0780f48832ca5fd55356d7")!) {
+                        HStack {
+                            Text("プライバシーポリシー")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                        }
+                    }
+                }
             }
             .navigationTitle("情報")
         }

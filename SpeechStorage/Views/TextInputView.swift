@@ -25,12 +25,21 @@ struct TextInputView: View {
                         .view()
                         .frame(width: 200, height: 200)
                 
-                TextEditor(text: $inputText)
-                    .focused($isFocused)
-                    .frame(height: 200)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $inputText)
+                        .focused($isFocused)
+                        .frame(height: 200)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    if inputText.isEmpty {
+                        Text("考えていることを書こう")
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                    }
+                }
                 
                 Button(action: saveText) {
                     Text("保存")
@@ -45,7 +54,7 @@ struct TextInputView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("考えていることを書こう")
+            .navigationTitle("新規メモ")
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
