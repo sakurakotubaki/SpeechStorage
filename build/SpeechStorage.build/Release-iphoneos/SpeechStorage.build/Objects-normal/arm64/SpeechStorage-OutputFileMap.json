@@ -1,0 +1,90 @@
+{
+  "" : {
+    "const-values" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master.swiftconstvalues",
+    "dependencies" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master.d",
+    "diagnostics" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master.dia",
+    "emit-module-dependencies" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master-emit-module.dia",
+    "swift-dependencies" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorage-master.swiftdeps"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/Color+Extension.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/Color+Extension.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/Color+Extension.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/Color+Extension.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/TTSManager.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TTSManager.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TTSManager.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TTSManager.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AlertManager.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AlertManager.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AlertManager.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AlertManager.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AudioPlayerManager.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioPlayerManager.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioPlayerManager.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioPlayerManager.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/ThemeManager.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ThemeManager.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ThemeManager.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ThemeManager.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Models/VoiceMemo.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/VoiceMemo.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/VoiceMemo.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/VoiceMemo.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/SpeechStorageApp.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorageApp.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorageApp.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/SpeechStorageApp.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/AudioWaveformView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioWaveformView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioWaveformView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/AudioWaveformView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ColorPickerView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ColorPickerView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ColorPickerView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ColorPickerView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ContentView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/InfoView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/InfoView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/InfoView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/InfoView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextInputView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextInputView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextInputView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextInputView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextMemoListView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextMemoListView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextMemoListView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/TextMemoListView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ToastView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ToastView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ToastView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/ToastView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/WaveformView.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/WaveformView.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/WaveformView.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/WaveformView.o"
+  },
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}
