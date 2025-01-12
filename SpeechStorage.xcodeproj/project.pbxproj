@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B35B1BA82D28363300346179 /* DotLottie in Frameworks */ = {isa = PBXBuildFile; productRef = B35B1BA72D28363300346179 /* DotLottie */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B38AD8AB2D27DEC200D9F120 /* SpeechStorage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechStorage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B35B1BA82D28363300346179 /* DotLottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = SpeechStorage;
 			packageProductDependencies = (
+				B35B1BA72D28363300346179 /* DotLottie */,
 			);
 			productName = SpeechStorage;
 			productReference = B38AD8AB2D27DEC200D9F120 /* SpeechStorage.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = B38AD8A22D27DEC200D9F120;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B35B1BA62D28363300346179 /* XCRemoteSwiftPackageReference "dotlottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B38AD8AC2D27DEC200D9F120 /* Products */;
 			projectDirPath = "";
@@ -260,12 +269,15 @@
 				CODE_SIGN_ENTITLEMENTS = SpeechStorage/SpeechStorage.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SpeechStorage/Preview Content\"";
 				DEVELOPMENT_TEAM = 42BPZX28NR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SpeechStorage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "スピーチストレージ";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "音声メモを録音するためにマイクへのアクセスが必要です";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "音声を文字に変換するために音声認識の使用許可が必要です";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -286,10 +298,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.junichi.SpeechStorage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
@@ -308,6 +321,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SpeechStorage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "スピーチストレージ";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "音声メモを録音するためにマイクへのアクセスが必要です";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "音声を文字に変換するために音声認識の使用許可が必要です";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -328,10 +343,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.junichi.SpeechStorage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
@@ -358,6 +374,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B35B1BA62D28363300346179 /* XCRemoteSwiftPackageReference "dotlottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LottieFiles/dotlottie-ios";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B35B1BA72D28363300346179 /* DotLottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35B1BA62D28363300346179 /* XCRemoteSwiftPackageReference "dotlottie-ios" */;
+			productName = DotLottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B38AD8A32D27DEC200D9F120 /* Project object */;
 }

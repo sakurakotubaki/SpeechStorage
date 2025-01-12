@@ -1,0 +1,16 @@
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/Color+Extension.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/TTSManager.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AlertManager.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AudioPlayerManager.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/ThemeManager.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Models/VoiceMemo.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/AudioWaveformView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ColorPickerView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ContentView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/InfoView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextInputView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextMemoListView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ToastView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/WaveformView.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/SpeechStorageApp.swift
+/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/DerivedSources/GeneratedAssetSymbols.swift
