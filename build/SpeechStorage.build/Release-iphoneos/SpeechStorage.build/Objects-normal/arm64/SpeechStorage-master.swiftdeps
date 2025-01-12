@@ -1,0 +1,22 @@
+version: "Apple Swift version 6.0.3 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)"
+options: "871cd01ac66fd100f2e7d508cf946e1f861a395dd6d82af06c92682209474e58"
+build_start_time: [1736428456, 171818000]
+build_end_time: [1736428460, 68578000]
+inputs:
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/Color+Extension.swift": !dirty [1735973386, 188004886]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Extensions/TTSManager.swift": !dirty [1735973386, 188232002]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AlertManager.swift": !dirty [1735973386, 188537866]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/AudioPlayerManager.swift": !dirty [1735973386, 189046514]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Managers/ThemeManager.swift": !dirty [1735973386, 189323712]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Models/VoiceMemo.swift": !dirty [1735973386, 189701156]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/SpeechStorageApp.swift": !dirty [1735977133, 472866275]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/AudioWaveformView.swift": !dirty [1735973386, 190324258]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ColorPickerView.swift": !dirty [1735973386, 190585582]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ContentView.swift": !dirty [1735975486, 543057680]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/InfoView.swift": !dirty [1735973386, 191253933]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextInputView.swift": !dirty [1735977133, 473148484]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/TextMemoListView.swift": !dirty [1735977133, 473608111]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/ToastView.swift": !dirty [1735973386, 191949949]
+  "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/SpeechStorage/Views/WaveformView.swift": !dirty [1735973386, 192151941]
+  ? "/Users/personal/jboy-application/swiftui-pj/SpeechStorage/build/SpeechStorage.build/Release-iphoneos/SpeechStorage.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : !dirty [1736428456, 162744784]
