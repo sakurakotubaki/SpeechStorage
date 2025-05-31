@@ -210,10 +210,14 @@ struct TextInputView: View {
         modelContext.insert(memo)
         do {
             try modelContext.save()
-            // リセットと通知
+            
+            // 保存後のリセット処理
             if isTextMode {
+                // テキスト入力モードのリセット
                 inputText = ""
             } else {
+                // 音声入力モードのリセット
+                // 明示的に空文字列に設定してUIをクリア
                 speechRecognizer.recognizedText = ""
                 
                 // 音声認識のリソースを完全に解放
@@ -222,6 +226,7 @@ struct TextInputView: View {
                 // TTSマネージャーのオーディオセッションをリセット
                 ttsManager.resetAudioSession()
             }
+            
             showToast = true
             toastMessage = "保存しました"
             isFocused = false  // 保存時にキーボードを閉じる
