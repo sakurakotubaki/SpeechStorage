@@ -11,89 +11,98 @@ struct TextInputView: View {
     @FocusState private var isFocused: Bool
     
     @StateObject private var speechRecognizer = SpeechRecognitionManager()
+    @ObservedObject private var ttsManager = TTSManager.shared
     @State private var inputText = ""
     @State private var isTextMode = true
     
     var body: some View {
         NavigationStack {
-            VStack {
-                DotLottieAnimation(
-                    fileName: "think",
-                    config: AnimationConfig(
-                        autoplay: true,
-                        loop: true,
-                        speed: 1.0
-                    )
-                )
-                .view()
-                .frame(width: 200, height: 200)
+            GeometryReader { geometry in
                 
-                if isTextMode {
-                    // テキスト入力モード
-                    ZStack(alignment: .topLeading) {
-                        TextEditor(text: $inputText)
-                            .focused($isFocused)
-                            .frame(height: 200)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                ScrollView {
+                    VStack(spacing: 15) {
+                        // Animation with adaptive sizing
+                        DotLottieAnimation(
+                            fileName: "think",
+                            config: AnimationConfig(
+                                autoplay: true,
+                                loop: true,
+                                speed: 1.0
+                            )
+                        )
+                        .view()
+                        .frame(
+                            width: min(geometry.size.width * 0.5, 180),
+                            height: min(geometry.size.width * 0.5, 180)
+                        )
+                        .padding(.top)
                         
-                        if inputText.isEmpty {
-                            Text("考えていることを書こう")
-                                .foregroundColor(.gray)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 16)
+                        if isTextMode {
+                            // テキスト入力モード
+                            ZStack(alignment: .topLeading) {
+                                TextEditor(text: $inputText)
+                                    .focused($isFocused)
+                                    .frame(height: min(geometry.size.height * 0.3, 200))
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                                
+                                if inputText.isEmpty {
+                                    Text("考えていることを書こう")
+                                        .foregroundColor(.gray)
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 16)
+                                }
+                            }
+                        } else {
+                            // 音声入力モード
+                            VStack(spacing: 10) {
+                                ZStack(alignment: .topLeading) {
+                                    TextEditor(text: $speechRecognizer.recognizedText)
+                                        .frame(height: min(geometry.size.height * 0.25, 180))
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(8)
+                                        .disabled(true)
+                                    
+                                    if speechRecognizer.recognizedText.isEmpty {
+                                        Text("マイクボタンを押して話してください")
+                                            .foregroundColor(.gray)
+                                            .padding(.horizontal, 20)
+                                            .padding(.vertical, 16)
+                                    }
+                                }
+                                
+                                HStack {
+                                    Spacer()
+                                    Button(action: toggleRecording) {
+                                        Image(systemName: speechRecognizer.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: min(geometry.size.width * 0.15, 60), height: min(geometry.size.width * 0.15, 60))
+                                            .foregroundColor(speechRecognizer.isRecording ? .red : themeManager.currentTheme)
+                                    }
+                                    .disabled(!speechRecognizer.isPermissionGranted)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 5)
+                            }
                         }
-                    }
-                } else {
-                    // 音声入力モード
-                    VStack {
-                        ZStack(alignment: .topLeading) {
-                            TextEditor(text: $speechRecognizer.recognizedText)
-                                .frame(height: 200)
+                        
+                        Button(action: saveContent) {
+                            Text("保存")
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(isContentEmpty ? Color.gray : themeManager.currentTheme)
                                 .cornerRadius(8)
-                                .disabled(true)
-                            
-                            if speechRecognizer.recognizedText.isEmpty {
-                                Text("マイクボタンを押して話してください")
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 16)
-                            }
                         }
-                        
-                        HStack {
-                            Spacer()
-                            Button(action: toggleRecording) {
-                                Image(systemName: speechRecognizer.isRecording ? "stop.circle.fill" : "mic.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(speechRecognizer.isRecording ? .red : themeManager.currentTheme)
-                            }
-                            .disabled(!speechRecognizer.isPermissionGranted)
-                            Spacer()
-                        }
-                        .padding(.vertical)
+                        .disabled(isContentEmpty)
+                        .padding(.bottom, geometry.size.height * 0.05 + 40) // Add extra bottom padding to avoid TabView overlap
                     }
+                    .padding(.horizontal)
                 }
-                
-                Button(action: saveContent) {
-                    Text("保存")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isContentEmpty ? Color.gray : themeManager.currentTheme)
-                        .cornerRadius(8)
-                }
-                .disabled(isContentEmpty)
-                
-                Spacer()
             }
-            .padding()
-            .navigationTitle("新規メモ")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Toggle(isOn: $isTextMode) {
@@ -101,8 +110,17 @@ struct TextInputView: View {
                     }
                     .toggleStyle(SwitchToggleStyle(tint: themeManager.currentTheme))
                     .onChange(of: isTextMode) { _, newValue in
-                        if !newValue && speechRecognizer.isRecording {
-                            speechRecognizer.stopRecording()
+                        if !newValue {
+                            // テキストモードから音声モードへの切り替え
+                            if speechRecognizer.isRecording {
+                                speechRecognizer.stopRecording()
+                            }
+                            // テキスト読み上げセッションをリセット
+                            ttsManager.resetAudioSession()
+                        } else {
+                            // 音声モードからテキストモードへの切り替え
+                            // 音声認識セッションを完全にクリーンアップ
+                            speechRecognizer.resetAudioSession()
                         }
                     }
                 }
@@ -114,6 +132,20 @@ struct TextInputView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            // ビューが表示されたときのセットアップ
+            // 両方のオーディオセッションをリセットして初期状態にする
+            speechRecognizer.resetAudioSession()
+            ttsManager.resetAudioSession()
+        }
+        .onDisappear {
+            // ビューが消えるときに必ずリソースを解放
+            if speechRecognizer.isRecording {
+                speechRecognizer.stopRecording()
+            }
+            speechRecognizer.resetAudioSession()
+            ttsManager.resetAudioSession()
         }
         .alert("マイクの権限が必要です", isPresented: .constant(!speechRecognizer.isPermissionGranted && !isTextMode)) {
             Button("設定を開く") {
@@ -162,6 +194,11 @@ struct TextInputView: View {
             guard !speechRecognizer.recognizedText.isEmpty else { return }
             textToSave = speechRecognizer.recognizedText
             speechType = .speech(speechRecognizer.recognizedText)
+            
+            // 録音中であれば停止する
+            if speechRecognizer.isRecording {
+                speechRecognizer.stopRecording()
+            }
         }
         
         let memo = VoiceMemo(
@@ -173,12 +210,23 @@ struct TextInputView: View {
         modelContext.insert(memo)
         do {
             try modelContext.save()
-            // リセットと通知
+            
+            // 保存後のリセット処理
             if isTextMode {
+                // テキスト入力モードのリセット
                 inputText = ""
             } else {
+                // 音声入力モードのリセット
+                // 明示的に空文字列に設定してUIをクリア
                 speechRecognizer.recognizedText = ""
+                
+                // 音声認識のリソースを完全に解放
+                speechRecognizer.resetAudioSession()
+                
+                // TTSマネージャーのオーディオセッションをリセット
+                ttsManager.resetAudioSession()
             }
+            
             showToast = true
             toastMessage = "保存しました"
             isFocused = false  // 保存時にキーボードを閉じる
