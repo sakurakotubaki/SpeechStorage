@@ -11,12 +11,14 @@ struct TextInputView: View {
     @FocusState private var isFocused: Bool
     
     @StateObject private var speechRecognizer = SpeechRecognitionManager()
+    @ObservedObject private var ttsManager = TTSManager.shared
     @State private var inputText = ""
     @State private var isTextMode = true
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
+                
                 ScrollView {
                     VStack(spacing: 15) {
                         // Animation with adaptive sizing
@@ -108,8 +110,17 @@ struct TextInputView: View {
                     }
                     .toggleStyle(SwitchToggleStyle(tint: themeManager.currentTheme))
                     .onChange(of: isTextMode) { _, newValue in
-                        if !newValue && speechRecognizer.isRecording {
-                            speechRecognizer.stopRecording()
+                        if !newValue {
+                            // テキストモードから音声モードへの切り替え
+                            if speechRecognizer.isRecording {
+                                speechRecognizer.stopRecording()
+                            }
+                            // テキスト読み上げセッションをリセット
+                            ttsManager.resetAudioSession()
+                        } else {
+                            // 音声モードからテキストモードへの切り替え
+                            // 音声認識セッションを完全にクリーンアップ
+                            speechRecognizer.resetAudioSession()
                         }
                     }
                 }
@@ -121,6 +132,20 @@ struct TextInputView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            // ビューが表示されたときのセットアップ
+            // 両方のオーディオセッションをリセットして初期状態にする
+            speechRecognizer.resetAudioSession()
+            ttsManager.resetAudioSession()
+        }
+        .onDisappear {
+            // ビューが消えるときに必ずリソースを解放
+            if speechRecognizer.isRecording {
+                speechRecognizer.stopRecording()
+            }
+            speechRecognizer.resetAudioSession()
+            ttsManager.resetAudioSession()
         }
         .alert("マイクの権限が必要です", isPresented: .constant(!speechRecognizer.isPermissionGranted && !isTextMode)) {
             Button("設定を開く") {
@@ -169,6 +194,11 @@ struct TextInputView: View {
             guard !speechRecognizer.recognizedText.isEmpty else { return }
             textToSave = speechRecognizer.recognizedText
             speechType = .speech(speechRecognizer.recognizedText)
+            
+            // 録音中であれば停止する
+            if speechRecognizer.isRecording {
+                speechRecognizer.stopRecording()
+            }
         }
         
         let memo = VoiceMemo(
@@ -185,6 +215,12 @@ struct TextInputView: View {
                 inputText = ""
             } else {
                 speechRecognizer.recognizedText = ""
+                
+                // 音声認識のリソースを完全に解放
+                speechRecognizer.resetAudioSession()
+                
+                // TTSマネージャーのオーディオセッションをリセット
+                ttsManager.resetAudioSession()
             }
             showToast = true
             toastMessage = "保存しました"

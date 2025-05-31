@@ -81,6 +81,20 @@ class SpeechRecognitionManager: NSObject, ObservableObject {
         isRecording = true
     }
     
+    func resetAudioSession() {
+        // 録音中であれば停止
+        if isRecording {
+            stopRecording()
+        }
+        
+        // オーディオセッションを完全にリセット
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("音声認識セッションのリセットエラー: \(error.localizedDescription)")
+        }
+    }
+    
     func stopRecording() {
         audioEngine.stop()
         recognitionRequest?.endAudio()
