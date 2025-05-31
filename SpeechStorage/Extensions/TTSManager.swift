@@ -86,6 +86,21 @@ class TTSManager: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         }
     }
     
+    func resetAudioSession() {
+        // 再生中なら停止
+        if isPlaying {
+            stopSpeaking()
+        }
+        
+        do {
+            // オーディオセッションを完全にリセット
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            try audioSession.setCategory(.playback, mode: .spokenAudio)
+        } catch {
+            print("TTSオーディオセッションのリセットエラー: \(error.localizedDescription)")
+        }
+    }
+    
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         DispatchQueue.main.async { [weak self] in
             self?.isPlaying = false
