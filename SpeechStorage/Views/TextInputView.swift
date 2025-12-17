@@ -5,13 +5,13 @@ import Speech
 
 struct TextInputView: View {
     @Environment(\.modelContext) private var modelContext
-    @ObservedObject var themeManager: ThemeManager
+    var themeManager: ThemeManager
     @Binding var showToast: Bool
     @Binding var toastMessage: String
     @FocusState private var isFocused: Bool
-    
+
     @StateObject private var speechRecognizer = SpeechRecognitionManager()
-    @ObservedObject private var ttsManager = TTSManager.shared
+    @StateObject private var ttsManager = TTSManager.shared
     @State private var inputText = ""
     @State private var isTextMode = true
     

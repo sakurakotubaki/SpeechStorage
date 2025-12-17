@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LottieFiles/dotlottie-ios",
       "state" : {
-        "branch" : "main",
-        "revision" : "8121da545e281c51fa03326af5ca216ac3570ecc"
+        "revision" : "4213e7298eb94b81ce08c226302759c34ce59366",
+        "version" : "0.11.1"
       }
     }
   ],

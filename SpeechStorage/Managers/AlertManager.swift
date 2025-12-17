@@ -1,12 +1,13 @@
 import SwiftUI
 
-class AlertManager: ObservableObject {
+@Observable
+class AlertManager {
     static let shared = AlertManager()
-    
-    @Published var isShowingAlert = false
-    @Published var alertTitle = ""
-    @Published var alertMessage = ""
-    
+
+    var isShowingAlert = false
+    var alertTitle = ""
+    var alertMessage = ""
+
     private init() {}
     
     func showAlert(title: String, message: String) {
