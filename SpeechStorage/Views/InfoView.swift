@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct InfoView: View {
-    @StateObject private var themeManager = ThemeManager.shared
+    private var themeManager = ThemeManager.shared
     @State private var selectedColor: Color = ThemeManager.shared.currentTheme
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section(header: Text("このアプリについて")) {
                     VStack(alignment: .leading, spacing: 10) {

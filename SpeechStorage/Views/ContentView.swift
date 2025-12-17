@@ -7,8 +7,8 @@ struct ContentView: View {
     @Query(sort: \VoiceMemo.createdAt, order: .reverse) private var textMemos: [VoiceMemo]
     
     @StateObject private var ttsManager = TTSManager.shared
-    @StateObject private var themeManager = ThemeManager.shared
-    @StateObject private var alertManager = AlertManager.shared
+    private var themeManager = ThemeManager.shared
+    @Bindable private var alertManager = AlertManager.shared
     
     @State private var selectedTab = 0
     @State private var showToast = false

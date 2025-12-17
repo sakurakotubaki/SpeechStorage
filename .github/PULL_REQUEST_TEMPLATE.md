@@ -1,11 +1,5 @@
 # Background
 
-## Changes
+## Supplementary information
 
-## Changed files
-
-## Improvements
-
-## Test content
-
-## Operation check
+## Screen Shot

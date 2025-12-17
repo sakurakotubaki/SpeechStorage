@@ -4,7 +4,7 @@ import SwiftData
 struct TextMemoListView: View {
     @Query private var textMemos: [VoiceMemo]
     @ObservedObject var ttsManager: TTSManager
-    @ObservedObject var themeManager: ThemeManager
+    var themeManager: ThemeManager
     @Environment(\.modelContext) private var modelContext
     
     @State private var currentIndex: Int = 0

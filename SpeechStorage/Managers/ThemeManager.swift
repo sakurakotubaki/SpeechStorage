@@ -1,20 +1,22 @@
 import SwiftUI
 
-class ThemeManager: ObservableObject {
+@Observable
+class ThemeManager {
     static let shared: ThemeManager = {
         let instance = ThemeManager()
         return instance
     }()
-    
+
     private var storage: UserDefaults
     private(set) var storedThemeColor: String
-    @Published private(set) var currentTheme: Color
-    
+    private(set) var currentTheme: Color
+
     private init() {
-        self.storage = UserDefaults.standard
-        self.storedThemeColor = storage.string(forKey: "themeColor") ?? "#007AFF"
-        let color = Color(hex: storedThemeColor) ?? .blue
-        self._currentTheme = Published(initialValue: color)
+        let defaults = UserDefaults.standard
+        let colorString = defaults.string(forKey: "themeColor") ?? "#007AFF"
+        self.storage = defaults
+        self.storedThemeColor = colorString
+        self.currentTheme = Color(hex: colorString) ?? .blue
     }
     
     func updateTheme(_ color: Color) {
